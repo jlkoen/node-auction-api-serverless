@@ -2,6 +2,7 @@ service: auction-service
 
 plugins:
   - serverless-bundle
+  - serverless-plugin-log-retention
 
 provider:
   name: aws
@@ -53,6 +54,7 @@ functions:
           path: auction/{id}/bid
 
 custom:
+  logRetentionInDays: 30
   AuctionsTable:
     name: !Ref AuctionsTable
     arn: !GetAtt AuctionsTable.Arn
