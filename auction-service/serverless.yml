@@ -21,6 +21,7 @@ resources:
 
 functions:
   createAuction:
+    description: createAuction Function
     handler: src/handlers/createAuction.handler
     events:
       - http:
@@ -28,6 +29,7 @@ functions:
           path: /auction
 
   getAuctions:
+    description: getAuctions Function
     handler: src/handlers/getAuctions.handler
     events:
       - http:
@@ -35,6 +37,7 @@ functions:
           path: /auctions
 
   getAuction:
+    description: getAuction Function
     handler: src/handlers/getAuction.handler
     events:
       - http:
@@ -42,6 +45,7 @@ functions:
           path: /auction/{id}
 
   placeBid:
+    description: placeBid Function
     handler: src/handlers/placeBid.handler
     events:
       - http:
