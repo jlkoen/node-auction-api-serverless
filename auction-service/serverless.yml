@@ -2,6 +2,7 @@ service: auction-service
 
 plugins:
   - serverless-bundle
+  - serverless-plugin-log-retention
 
 provider:
   name: aws
@@ -21,6 +22,7 @@ resources:
 
 functions:
   createAuction:
+    description: createAuction Function
     handler: src/handlers/createAuction.handler
     events:
       - http:
@@ -28,6 +30,7 @@ functions:
           path: /auction
 
   getAuctions:
+    description: getAuctions Function
     handler: src/handlers/getAuctions.handler
     events:
       - http:
@@ -35,13 +38,23 @@ functions:
           path: /auctions
 
   getAuction:
+    description: getAuction Function
     handler: src/handlers/getAuction.handler
     events:
       - http:
           method: GET
           path: /auction/{id}
 
+  placeBid:
+    description: placeBid Function
+    handler: src/handlers/placeBid.handler
+    events:
+      - http:
+          method: PATCH
+          path: auction/{id}/bid
+
 custom:
+  logRetentionInDays: 30
   AuctionsTable:
     name: !Ref AuctionsTable
     arn: !GetAtt AuctionsTable.Arn
