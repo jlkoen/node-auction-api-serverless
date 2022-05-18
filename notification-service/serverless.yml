@@ -1,0 +1,23 @@
+service: notification-service
+
+plugins:
+  - serverless-bundle
+  - serverless-plugin-log-retention
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  lambdaHashingVersion: 20201221
+  iamRoleStatements:
+    - ${file(iam/SendMailIAM.yml):SendMailIAM}
+
+functions:
+  sendMail:
+    description: sendMail Function
+    handler: src/handlers/sendMail.handler
+
+custom:
+  logRetentionInDays: 30
