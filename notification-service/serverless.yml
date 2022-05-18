@@ -13,11 +13,23 @@ provider:
   lambdaHashingVersion: 20201221
   iamRoleStatements:
     - ${file(iam/SendMailIAM.yml):SendMailIAM}
+    - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
+
+resources:
+  Resources:
+    MailQueue: ${file(resources/MailQueue.yml):MailQueue}
 
 functions:
   sendMail:
     description: sendMail Function
     handler: src/handlers/sendMail.handler
+    events:
+      - sqs:
+          arn: ${self:custom.mailQueue.arn}
+          batchSize: 1
 
 custom:
   logRetentionInDays: 30
+  mailQueue:
+    name: Auction-MailQueue-${self:provider.stage}
+    arn: !GetAtt MailQueue.Arn
