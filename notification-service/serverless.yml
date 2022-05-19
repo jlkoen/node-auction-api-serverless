@@ -1,0 +1,39 @@
+service: notification-service
+
+plugins:
+  - serverless-bundle
+  - serverless-plugin-log-retention
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  lambdaHashingVersion: 20201221
+  iamRoleStatements:
+    - ${file(iam/SendMailIAM.yml):SendMailIAM}
+    - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
+
+resources:
+  Resources:
+    MailQueue: ${file(resources/MailQueue.yml):MailQueue}
+  Outputs:
+    MailQueueArn: ${file(resources/MailQueue.yml):Outputs.MailQueueArn}
+    MailQueueUrl: ${file(resources/MailQueue.yml):Outputs.MailQueueUrl}
+
+functions:
+  sendMail:
+    description: sendMail Function
+    handler: src/handlers/sendMail.handler
+    events:
+      - sqs:
+          arn: ${self:custom.mailQueue.arn}
+          batchSize: 1
+
+custom:
+  logRetentionInDays: 30
+  mailQueue:
+    name: MailQueue-${self:provider.stage}
+    arn: !GetAtt MailQueue.Arn
+    url: !Ref MailQueue
